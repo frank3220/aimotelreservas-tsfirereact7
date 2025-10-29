@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut, User } from "firebase/auth";
 import { getDatabase, ref, set, push, get, onValue, query, orderByChild, equalTo, update } from "firebase/database";
@@ -6,6 +7,12 @@ import { collection, getDocs } from "firebase/firestore";
 import MegaAgent from "./components/MegaAgent";
 import NequiPaymentFlow from "./components/NequiPaymentFlow";
 import MisReservas from "./components/MisReservas";
+import DisponibleButton from "./components/botonestados/DisponibleButton";
+import PendienteButton from "./components/botonestados/PendienteButton";
+import ReservadaButton from "./components/botonestados/ReservadaButton";
+import IngresadaButton from "./components/botonestados/IngresadaButton";
+import EliminadaButton from "./components/botonestados/EliminadaButton";
+import MantenimientoButton from "./components/botonestados/MantenimientoButton";
 
 // Función para actualizar la UI y guardar en la base de datos
 const updateUI = (user: User | null) => {
@@ -85,13 +92,7 @@ function RoomCard({ room, onReserve, isOccupied }: { room: any, onReserve: (room
             <div className="flex-1 flex flex-col gap-1 px-5 py-4">
                 <h3 className="font-bold text-lg text-white drop-shadow-sm mb-2">{room.name}</h3>
                 <p className="text-white/70 text-sm flex-1">{room.desc}</p>
-                <button 
-                    className={`mt-2 w-full font-semibold py-2 rounded-xl shadow-md transition ${isOccupied ? 'bg-gray-500 cursor-not-allowed' : 'bg-pink-600 hover:bg-pink-700'}`}
-                    onClick={() => !isOccupied && onReserve(room)}
-                    disabled={isOccupied}
-                >
-                    {isOccupied ? 'Ocupada' : 'Reservar'}
-                </button>
+                <DisponibleButton onClick={() => onReserve(room)} disabled={isOccupied} />
             </div>
         </div>
     );

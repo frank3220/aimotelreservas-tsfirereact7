@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "aireservas-admin",
+    "aireservas-admin": "aireservas-admin"
+  },
+  "targets": {},
+  "etags": {}
+}

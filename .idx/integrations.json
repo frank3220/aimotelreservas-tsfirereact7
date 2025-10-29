@@ -1,0 +1,6 @@
+{
+  "firebase_hosting": {
+    "deploymentHostingUrl": "https://aireservas-admin.web.app"
+  },
+  "cloud_run_deploy": {}
+}

@@ -65,7 +65,7 @@ function Header({ user, onLogin, onLogout }: { user: User | null, onLogin: () =>
     );
 }
 
-function RoomCard({ room, onReserve, onAdminOpen, isOccupied, calendarImageUrl }: { room: any, onReserve: (room: any) => void, onAdminOpen: (roomId: string) => void, isOccupied: boolean, calendarImageUrl: string }) {
+function RoomCard({ room, onReserve, onAdminOpen, isOccupied }: { room: any, onReserve: (room: any) => void, onAdminOpen: (roomId: string) => void, isOccupied: boolean }) {
     return (
         <div className="bg-white/10 rounded-2xl shadow-xl overflow-hidden border border-white/20 hover:scale-105 transition w-full max-w-xs flex flex-col">
             <div className="aspect-video bg-black relative">
@@ -77,7 +77,9 @@ function RoomCard({ room, onReserve, onAdminOpen, isOccupied, calendarImageUrl }
                 <div className="flex justify-between items-start">
                     <h3 className="font-bold text-lg text-white drop-shadow-sm">{room.name}</h3>
                     <button onClick={() => onAdminOpen(room.id)} className="p-2" title="Ver historial de reservas">
-                        <img src={calendarImageUrl} alt="Calendario" className="w-8 h-8" />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white/70 hover:text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
                     </button>
                 </div>
                 <p className="text-white/70 text-sm flex-1">{room.desc}</p>
@@ -114,7 +116,6 @@ export default function App() {
     const [user, setUser] = useState<User | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const [rooms, setRooms] = useState<any[]>([]);
-    const [specialImageUrl, setSpecialImageUrl] = useState('');
     const [showLogin, setShowLogin] = useState(false);
     const [showReserve, setShowReserve] = useState(false);
     const [selectedRoom, setSelectedRoom] = useState<any | null>(null);
@@ -133,12 +134,6 @@ export default function App() {
             const roomsList = roomsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             const sortedRooms = roomsList.sort((a, b) => parseInt(a.id, 10) - parseInt(b.id, 10));
             setRooms(sortedRooms);
-
-            const imageDocRef = doc(firestore, "imagenes", "calendario2");
-            const imageDocSnap = await getDoc(imageDocRef);
-            if (imageDocSnap.exists()) {
-                setSpecialImageUrl(imageDocSnap.data().calendario2);
-            }
         };
         fetchRoomsAndImage();
     }, []);
@@ -236,7 +231,7 @@ export default function App() {
                             isOccupied={occupiedRooms.has(room.id)}
                             onAdminOpen={handleAdminOpen}
                             onReserve={handleOpenReserveModal}
-                            calendarImageUrl={specialImageUrl} />
+                        />
                     ))}
                 </section>
             </main>

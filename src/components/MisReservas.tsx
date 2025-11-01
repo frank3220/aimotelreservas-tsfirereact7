@@ -2,9 +2,8 @@ import React from 'react';
 
 function MisReservas({ show, onClose, reservations, rooms }: { show: boolean, onClose: () => void, reservations: any[], rooms: any[] }) {
     
-    const getRoomName = (roomId: string) => {
-        const room = rooms.find(r => r.id === roomId);
-        return room ? room.name : `Habitación ${roomId}`;
+    const getRoomById = (roomId: string) => {
+        return rooms.find(r => r.id === roomId);
     };
 
     const getStatusInfo = (status: string) => {
@@ -41,12 +40,16 @@ function MisReservas({ show, onClose, reservations, rooms }: { show: boolean, on
                     <ul className="space-y-4 max-h-[60vh] overflow-y-auto pr-4 text-sm">
                         {reservations.map((res) => {
                             const statusInfo = getStatusInfo(res.status);
+                            const room = getRoomById(res.roomId);
                             return (
-                                <li key={res.id} className="bg-white/10 p-4 rounded-lg border border-white/20 text-white">
-                                    <p className="font-bold text-lg text-pink-300 mb-2">{getRoomName(res.roomId)}</p>
-                                    <p><span className="text-white/70 font-semibold">Fecha:</span> {new Date(res.startTime).toLocaleDateString('es-CO')}</p>
-                                    <p><span className="text-white/70 font-semibold">Hora:</span> {new Date(res.startTime).toLocaleTimeString('es-CO')}</p>
-                                    <p><span className="text-white/70 font-semibold">Estado:</span> <span className={`${statusInfo.color} font-bold`}>{statusInfo.text}</span></p>
+                                <li key={res.id} className="bg-white/10 p-4 rounded-lg border border-white/20 text-white flex items-center gap-4">
+                                    {room && <img src={room.img} alt={room.name} className="w-20 h-20 rounded-md object-cover"/>}
+                                    <div>
+                                        <p className="font-bold text-lg text-pink-300 mb-2">{room ? room.name : `Habitación ${res.roomId}`}</p>
+                                        <p><span className="text-white/70 font-semibold">Fecha:</span> {new Date(res.startTime).toLocaleDateString('es-CO')}</p>
+                                        <p><span className="text-white/70 font-semibold">Hora:</span> {new Date(res.startTime).toLocaleTimeString('es-CO')}</p>
+                                        <p><span className="text-white/70 font-semibold">Estado:</span> <span className={`${statusInfo.color} font-bold`}>{statusInfo.text}</span></p>
+                                    </div>
                                 </li>
                             );
                         })}

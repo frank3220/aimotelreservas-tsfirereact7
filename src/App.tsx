@@ -44,7 +44,7 @@ function Modal({ children, show, onClose }: { children: React.ReactNode, show: b
     );
 }
 
-function Header({ user, onLogin, onLogout, onShowReservations }: { user: User | null, onLogin: () => void, onLogout: () => void, onShowReservations: () => void }) {
+function Header({ user, onLogin, onLogout }: { user: User | null, onLogin: () => void, onLogout: () => void }) {
     return (
         <header className="px-6 py-4 flex justify-between items-center bg-black/70 backdrop-blur text-white sticky top-0 z-50">
             <div className="flex items-center gap-3">
@@ -54,14 +54,7 @@ function Header({ user, onLogin, onLogout, onShowReservations }: { user: User | 
             <div className="flex items-center gap-4">
                 <span className="hidden md:block text-sm text-white/70">20 habitaciones • Desde $20.000</span>
                 {user ? (
-                    <>
-                        <button onClick={onShowReservations} className="p-2" title="Mis Reservas">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white/70 hover:text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
-                        </button>
-                        <button onClick={onLogout} className="bg-gradient-to-r from-pink-600 to-purple-600 hover:to-pink-700 px-5 py-2 rounded-xl font-bold text-sm">Logout</button>
-                    </>
+                    <button onClick={onLogout} className="bg-gradient-to-r from-pink-600 to-purple-600 hover:to-pink-700 px-5 py-2 rounded-xl font-bold text-sm">Logout</button>
                 ) : (
                     <button onClick={onLogin} className="bg-gradient-to-r from-pink-600 to-purple-600 hover:to-pink-700 px-5 py-2 rounded-xl font-bold">Login</button>
                 )}
@@ -225,7 +218,7 @@ export default function App() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-black to-fuchsia-950">
-            <Header user={user} onLogin={() => setShowLogin(true)} onLogout={handleLogout} onShowReservations={handleShowUserReservations} />
+            <Header user={user} onLogin={() => setShowLogin(true)} onLogout={handleLogout} />
 
             <main className="mx-auto py-10 px-4 max-w-7xl">
                 <section className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center">

@@ -44,7 +44,7 @@ function Modal({ children, show, onClose }: { children: React.ReactNode, show: b
     );
 }
 
-function Header({ user, onLogin, onLogout }: { user: User | null, onLogin: () => void, onLogout: () => void }) {
+function Header({ user, onLogin, onLogout, onShowReservations }: { user: User | null, onLogin: () => void, onLogout: () => void, onShowReservations: () => void }) {
     return (
         <header className="px-6 py-4 flex justify-between items-center bg-black/70 backdrop-blur text-white sticky top-0 z-50">
             <div className="flex items-center gap-3">
@@ -55,6 +55,11 @@ function Header({ user, onLogin, onLogout }: { user: User | null, onLogin: () =>
                 <span className="hidden md:block text-sm text-white/70">20 habitaciones • Desde $20.000</span>
                 {user ? (
                     <>
+                        <button onClick={onShowReservations} className="p-2" title="Mis Reservas">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white/70 hover:text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </button>
                         <button onClick={onLogout} className="bg-gradient-to-r from-pink-600 to-purple-600 hover:to-pink-700 px-5 py-2 rounded-xl font-bold text-sm">Logout</button>
                     </>
                 ) : (
@@ -65,7 +70,7 @@ function Header({ user, onLogin, onLogout }: { user: User | null, onLogin: () =>
     );
 }
 
-function RoomCard({ room, onReserve, onAdminOpen, isOccupied }: { room: any, onReserve: (room: any) => void, onAdminOpen: (roomId: string) => void, isOccupied: boolean }) {
+function RoomCard({ room, onReserve, onAdminOpen, isOccupied, isAdmin }: { room: any, onReserve: (room: any) => void, onAdminOpen: (roomId: string) => void, isOccupied: boolean, isAdmin: boolean }) {
     return (
         <div className="bg-white/10 rounded-2xl shadow-xl overflow-hidden border border-white/20 hover:scale-105 transition w-full max-w-xs flex flex-col">
             <div className="aspect-video bg-black relative">
@@ -74,10 +79,10 @@ function RoomCard({ room, onReserve, onAdminOpen, isOccupied }: { room: any, onR
                 <span className="absolute bottom-3 left-3 bg-black/70 text-white text-xs px-2 py-1 rounded-full font-medium">{room.desc.includes("2 Horas") ? "2 horas" : "1 hora"}</span>
             </div>
             <div className="flex-1 flex flex-col gap-3 px-5 py-4">
-                <div className="flex justify-between items-start">
+                <div className="flex justify-between items-center">
                     <h3 className="font-bold text-lg text-white drop-shadow-sm">{room.name}</h3>
                     <button onClick={() => onAdminOpen(room.id)} className="p-2" title="Ver historial de reservas">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-white/70 hover:text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white/70 hover:text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     </button>
@@ -220,7 +225,7 @@ export default function App() {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-black to-fuchsia-950">
-            <Header user={user} onLogin={() => setShowLogin(true)} onLogout={handleLogout} />
+            <Header user={user} onLogin={() => setShowLogin(true)} onLogout={handleLogout} onShowReservations={handleShowUserReservations} />
 
             <main className="mx-auto py-10 px-4 max-w-7xl">
                 <section className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center">
@@ -231,6 +236,7 @@ export default function App() {
                             isOccupied={occupiedRooms.has(room.id)}
                             onAdminOpen={handleAdminOpen}
                             onReserve={handleOpenReserveModal}
+                            isAdmin={isAdmin}
                         />
                     ))}
                 </section>

@@ -6,9 +6,9 @@ import { auth, firestore } from "./firebase";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import MegaAgent from "./components/MegaAgent";
 import NequiPaymentFlow from "./components/NequiPaymentFlow";
-import MisReservas from "./components/MisReservas";
 import HistorialReservasModal from "./components/HistorialReservasModal";
 import DisponibleButton from "./components/botonestados/DisponibleButton";
+import VerHistorial from "./components/VerHistorial";
 
 const checkAdminRole = (user: User | null) => {
     return user?.email === "admin@iamoteles.com"; 
@@ -44,7 +44,7 @@ function Modal({ children, show, onClose }: { children: React.ReactNode, show: b
     );
 }
 
-function Header({ user, onLogin, onLogout }: { user: User | null, onLogin: () => void, onLogout: () => void }) {
+function Header({ user, onLogin, onLogout, isAdmin, onAllReservationsClick }: { user: User | null, onLogin: () => void, onLogout: () => void, isAdmin: boolean, onAllReservationsClick: () => void }) {
     return (
         <header className="px-6 py-4 flex justify-between items-center bg-black/70 backdrop-blur text-white sticky top-0 z-50">
             <div className="flex items-center gap-3">
@@ -53,6 +53,15 @@ function Header({ user, onLogin, onLogout }: { user: User | null, onLogin: () =>
             </div>
             <div className="flex items-center gap-4">
                 <span className="hidden md:block text-sm text-white/70">20 habitaciones • Desde $20.000</span>
+                
+                {isAdmin && (
+                    <button onClick={onAllReservationsClick} className="p-2" title="Ver todas las reservas">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white/70 hover:text-pink-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                    </button>
+                )}
+
                 {user ? (
                     <button onClick={onLogout} className="bg-gradient-to-r from-pink-600 to-purple-600 hover:to-pink-700 px-5 py-2 rounded-xl font-bold text-sm">Logout</button>
                 ) : (
@@ -120,10 +129,9 @@ export default function App() {
     const [showAdminModal, setShowAdminModal] = useState(false);
     const [selectedRoomId, setSelectedRoomId] = useState<string | null>(null);
     const [showPayment, setShowPayment] = useState(false);
-    const [showUserReservations, setShowUserReservations] = useState(false);
     const [reservationDetails, setReservationDetails] = useState<any | null>(null);
-    const [userReservations, setUserReservations] = useState<any[]>([]);
     const [occupiedRooms, setOccupiedRooms] = useState(new Set());
+    const [showVerHistorial, setShowVerHistorial] = useState(false);
 
     useEffect(() => {
         const fetchRoomsAndImage = async () => {
@@ -198,27 +206,19 @@ export default function App() {
         setShowPayment(true);
     };
 
-    const createReservation = async () => {};
-    const handleShowUserReservations = async () => {
-    if (!user) {
-        setShowLogin(true);
-        return;
-    }
-
-    const db = getDatabase();
-    const reservationsRef = ref(db, 'reservations');
-    const snapshot = await get(reservationsRef);
-    const allReservations = snapshot.val() || {};
-    
-    const currentUserReservations = Object.values(allReservations).filter((res: any) => res.userId === user.uid);
-    
-    setUserReservations(currentUserReservations as any[]);
-    setShowUserReservations(true);
-};
+    const handleShowAllReservations = () => {
+        setShowVerHistorial(true);
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-zinc-900 via-black to-fuchsia-950">
-            <Header user={user} onLogin={() => setShowLogin(true)} onLogout={handleLogout} />
+            <Header 
+                user={user} 
+                onLogin={() => setShowLogin(true)} 
+                onLogout={handleLogout} 
+                isAdmin={isAdmin}
+                onAllReservationsClick={handleShowAllReservations} 
+            />
 
             <main className="mx-auto py-10 px-4 max-w-7xl">
                 <section className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 justify-center">
@@ -242,8 +242,10 @@ export default function App() {
 
             <LoginModal show={showLogin} onClose={() => setShowLogin(false)} onGoogleLogin={handleGoogleSignIn} />
             <ReservationModal show={showReserve} onClose={() => setShowReserve(false)} room={selectedRoom} onPayment={handleReservation} />
-            <MisReservas show={showUserReservations} onClose={() => setShowUserReservations(false)} reservations={userReservations} rooms={rooms} />
             <HistorialReservasModal show={showAdminModal} onClose={() => setShowAdminModal(false)} roomId={selectedRoomId} rooms={rooms} />
+
+            {/* <VerHistorial show={showVerHistorial} onClose={() => setShowVerHistorial(false)} /> */}
+            
             <MegaAgent rooms={rooms} onReserve={(roomId) => {}}/>
         </div>
     );

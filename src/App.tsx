@@ -7,7 +7,6 @@ import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import MegaAgent from "./components/MegaAgent";
 import NequiPaymentFlow from "./components/NequiPaymentFlow";
 import HistorialReservasModal from "./components/HistorialReservasModal";
-import DisponibleButton from "./components/botonestados/DisponibleButton";
 import VerHistorial from "./components/VerHistorial";
 
 const checkAdminRole = (user: User | null) => {
@@ -72,7 +71,7 @@ function Header({ user, onLogin, onLogout, isAdmin, onAllReservationsClick }: { 
     );
 }
 
-function RoomCard({ room, onReserve, onAdminOpen, isOccupied, isAdmin }: { room: any, onReserve: (room: any) => void, onAdminOpen: (roomId: string) => void, isOccupied: boolean, isAdmin: boolean }) {
+function RoomCard({ room, onAdminOpen }: { room: any, onAdminOpen: (roomId: string) => void }) {
     return (
         <div className="bg-white/10 rounded-2xl shadow-xl overflow-hidden border border-white/20 hover:scale-105 transition w-full max-w-xs flex flex-col">
             <div className="aspect-video bg-black relative">
@@ -90,7 +89,6 @@ function RoomCard({ room, onReserve, onAdminOpen, isOccupied, isAdmin }: { room:
                     </button>
                 </div>
                 <p className="text-white/70 text-sm flex-1">{room.desc}</p>
-                <DisponibleButton onClick={() => onReserve(room)} disabled={isOccupied} />
             </div>
         </div>
     );
@@ -226,10 +224,7 @@ export default function App() {
                         <RoomCard
                             key={room.id}
                             room={room}
-                            isOccupied={occupiedRooms.has(room.id)}
                             onAdminOpen={handleAdminOpen}
-                            onReserve={handleOpenReserveModal}
-                            isAdmin={isAdmin}
                         />
                     ))}
                 </section>
